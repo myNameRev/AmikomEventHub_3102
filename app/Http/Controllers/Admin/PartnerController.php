@@ -11,10 +11,17 @@ class PartnerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $partners = Partner::all();
-        return view('admin.partners.index', compact('partners'));
+        $search = $request->query('search', '');
+        
+        if ($search) {
+            $partners = Partner::where('name', 'LIKE', '%' . $search . '%')->latest()->paginate(10);
+        } else {
+            $partners = Partner::latest()->paginate(10);
+        }
+        
+        return view('admin.partners.index', compact('partners', 'search'));
     }
 
     /**
@@ -52,15 +59,27 @@ class PartnerController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $partner = Partner::findOrFail($id);
+        return view('admin.partners.edit', compact('partner'));
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        //
+    {$partner = Partner::findOrFail($id);
+        
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'logo_url' => 'nullable|url|max:255'
+        ]);
+
+        $partner->update($data);
+        return redirect()->route('admin.partners.index')->with('success', 'Partner berhasil diperbarui!');
+        $partner = Partner::findOrFail($id);
+        $partner->delete();
+        
+        return redirect()->route('admin.partners.index')->with('success', 'Partner berhasil dihapus!');
     }
 
     /**

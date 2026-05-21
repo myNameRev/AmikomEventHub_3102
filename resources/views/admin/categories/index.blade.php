@@ -4,12 +4,12 @@
 <main class="flex-1 p-10 overflow-y-auto">
     <header class="flex justify-between items-center mb-10">
         <div>
-            <h1 class="text-3xl font-black">Kelola Partner</h1>
-            <p class="text-slate-500 font-medium">Atur dan kelola mitra platform digital Anda di sini.</p>
+            <h1 class="text-3xl font-black">Kelola Kategori</h1>
+            <p class="text-slate-500 font-medium">Atur dan kelola kategori event di platform Anda.</p>
         </div>
-        <a href="{{ route('admin.partners.create') }}"
+        <a href="{{ route('admin.categories.create') }}"
             class="px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 active:scale-95 transition">
-            + Tambah Partner Baru
+            + Tambah Kategori Baru
         </a>
     </header>
 
@@ -25,13 +25,13 @@
                 <input type="text" 
                        name="search" 
                        value="{{ $search }}"
-                       placeholder="Cari nama partner..."
+                       placeholder="Cari nama kategori..."
                        class="flex-1 px-5 py-3 rounded-xl border-slate-200 border bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
                 <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition">
                     Cari
                 </button>
                 @if($search)
-                    <a href="{{ route('admin.partners.index') }}" class="px-6 py-3 bg-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-300 transition">
+                    <a href="{{ route('admin.categories.index') }}" class="px-6 py-3 bg-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-300 transition">
                         Reset
                     </a>
                 @endif
@@ -43,30 +43,29 @@
                 <thead class="bg-slate-50 text-slate-400 uppercase text-[10px] font-black tracking-widest">
                     <tr>
                         <th class="px-8 py-4 w-16">No</th>
-                        <th class="px-8 py-4">Logo</th>
-                        <th class="px-8 py-4">Nama Partner</th>
-                        <th class="px-8 py-4">Bergabung</th>
+                        <th class="px-8 py-4">Nama Kategori</th>
+                        <th class="px-8 py-4">Dibuat</th>
+                        <th class="px-8 py-4">Diperbarui</th>
                         <th class="px-8 py-4">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y border-t">
-                    @forelse($partners as $index => $partner)
+                    @forelse($categories as $index => $category)
                     <tr class="hover:bg-slate-50/50 transition">
-                        <td class="px-8 py-6 font-bold text-slate-400">{{ ($partners->currentPage() - 1) * $partners->perPage() + $index + 1 }}</td>
+                        <td class="px-8 py-6 font-bold text-slate-400">{{ ($categories->currentPage() - 1) * $categories->perPage() + $index + 1 }}</td>
                         <td class="px-8 py-6">
-                            <img src="{{ $partner->logo_url }}" alt="{{ $partner->name }}" 
-                                 class="w-16 h-16 rounded-xl object-cover shadow-sm bg-slate-100">
+                            <p class="font-black text-slate-800">{{ $category->name }}</p>
+                            <p class="text-xs text-slate-400">ID: {{ $category->id }}</p>
                         </td>
                         <td class="px-8 py-6">
-                            <p class="font-black text-slate-800">{{ $partner->name }}</p>
-                            <p class="text-xs text-slate-400">ID: {{ $partner->id }}</p>
+                            <p class="text-sm text-slate-600">{{ $category->created_at->format('d M Y') }}</p>
                         </td>
                         <td class="px-8 py-6">
-                            <p class="text-sm text-slate-600">{{ $partner->created_at->format('d M Y') }}</p>
+                            <p class="text-sm text-slate-600">{{ $category->updated_at->format('d M Y') }}</p>
                         </td>
                         <td class="px-8 py-6">
                             <div class="flex gap-2">
-                                <a href="{{ route('admin.partners.edit', $partner->id) }}"
+                                <a href="{{ route('admin.categories.edit', $category->id) }}"
                                     class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white transition"
                                     title="Edit">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,8 +74,8 @@
                                         </path>
                                     </svg>
                                 </a>
-                                <form action="{{ route('admin.partners.destroy', $partner->id) }}" method="POST" class="inline"
-                                    onsubmit="return confirm('Yakin ingin menghapus partner ini?')">
+                                <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="inline"
+                                    onsubmit="return confirm('Yakin ingin menghapus kategori ini?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" 
@@ -95,19 +94,19 @@
                     @empty
                     <tr>
                         <td colspan="5" class="px-8 py-12 text-center text-slate-400">
-                            <p class="font-medium">Tidak ada partner yang ditemukan</p>
+                            Tidak ada kategori yang ditemukan.
                         </td>
                     </tr>
-        
-        @if($partners->hasPages())
-        <div class="px-8 py-6 border-t">
-            {{ $partners->links() }}
-        </div>
-        @endif
                     @endforelse
                 </tbody>
             </table>
         </div>
+        
+        @if($categories->hasPages())
+        <div class="px-8 py-6 border-t">
+            {{ $categories->links() }}
+        </div>
+        @endif
     </div>
 </main>
 @endsection
