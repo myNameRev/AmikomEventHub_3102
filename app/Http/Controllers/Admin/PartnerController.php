@@ -67,19 +67,17 @@ class PartnerController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {$partner = Partner::findOrFail($id);
-        
+    {
+        $partner = Partner::findOrFail($id);
+
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'logo_url' => 'nullable|url|max:255'
         ]);
 
         $partner->update($data);
+
         return redirect()->route('admin.partners.index')->with('success', 'Partner berhasil diperbarui!');
-        $partner = Partner::findOrFail($id);
-        $partner->delete();
-        
-        return redirect()->route('admin.partners.index')->with('success', 'Partner berhasil dihapus!');
     }
 
     /**
@@ -87,6 +85,9 @@ class PartnerController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $partner = Partner::findOrFail($id);
+        $partner->delete();
+
+        return redirect()->route('admin.partners.index')->with('success', 'Partner berhasil dihapus!');
     }
 }

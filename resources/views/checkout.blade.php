@@ -23,7 +23,7 @@
 
                     <h4 class="font-extrabold text-lg">{{ $event->title }}</h4>
                     <p class="text-slate-500">{{ $event->date ? $event->date->format('d M Y H:i') : 'Tanggal belum diatur' }} • {{ $event->location }}</p>
-                    <p class="text-indigo-600 font-bold mt-2">1 x Rp {{ number_format($event->price, 0, ',', '.') }}</p>
+                    <p class="text-indigo-600 font-bold mt-2" id="ticketSummaryLine">1 x Rp {{ number_format($event->price, 0, ',', '.') }}</p>
                 </div>
             </div>
             <div class="mt-8 pt-6 border-t space-y-3">
@@ -37,7 +37,7 @@
                 </div>
                 <div class="flex justify-between text-2xl font-black mt-4 pt-4 border-t">
                     <span>Total Bayar</span>
-                    <span class="text-indigo-600">Rp {{ number_format($event->price, 0, ',', '.') }}</span>
+                    <span class="text-indigo-600" id="totalPriceText">Rp {{ number_format($event->price, 0, ',', '.') }}</span>
                 </div>
             </div>
         </div>
@@ -135,6 +135,41 @@
 @endif
 
 <script>
+// Live update total bayar berdasarkan jumlah tiket
+(function () {
+    const quantityInput = document.querySelector('input[name="quantity"]');
+    const eventPrice = {{ (int)$event->price }};
+
+    const totalPriceEl = document.getElementById('totalPriceText');
+    const ticketSummaryEl = document.getElementById('ticketSummaryLine');
+
+    const formatIDR = (value) => {
+        try {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(value);
+        } catch (e) {
+            return 'Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+    };
+
+    const updateSummary = () => {
+        const qty = Math.max(1, parseInt(quantityInput?.value || '1', 10));
+        const total = eventPrice * qty;
+
+        if (totalPriceEl) totalPriceEl.textContent = formatIDR(total);
+        if (ticketSummaryEl) ticketSummaryEl.textContent = qty + ' x Rp ' + Number(eventPrice).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+        // Total Bayar sudah menggunakan formatter IDR
+        // (tetap di-override saat qty berubah)
+
+    };
+
+    if (quantityInput) {
+        quantityInput.addEventListener('input', updateSummary);
+        updateSummary();
+    }
+})();
+
+
 document.getElementById('payButton').addEventListener('click', async function(e) {
     e.preventDefault();
     
