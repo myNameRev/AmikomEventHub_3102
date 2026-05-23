@@ -82,7 +82,8 @@
                         
                         <div class="relative overflow-hidden aspect-[3/4] bg-slate-100">
                             <img 
-                                src="{{ asset('assets/' . $event->poster_path) }}" 
+                                src="{{ $event->poster_url }}" 
+
                                 alt="{{ $event->title }}"
                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                 onerror="this.onerror=null;this.src='https://via.placeholder.com/400x600?text=Harap+Ubah+Database';"
@@ -112,7 +113,7 @@
                                     Rp {{ number_format($event->price, 0, ',', '.') }}
                                 </span>
 
-                                <a href="{{ url('event/' . $event->id) }}" class="px-5 py-2 bg-indigo-50 text-indigo-600 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition">
+                                <a href="{{ route('events.show', $event->id) }}" class="px-5 py-2 bg-indigo-50 text-indigo-600 rounded-xl font-bold hover:bg-indigo-600 hover:text-white transition">
                                     Lihat Detail
                                 </a>
                             </div>
@@ -120,5 +121,40 @@
                     </div>
                 @endforeach
             </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-6 py-20">
+        <div class="flex justify-between items-end mb-12">
+            <div>
+                <h2 class="text-3xl font-extrabold mb-2">Mitra Terpercaya Kami</h2>
+                <p class="text-slate-500 font-medium">Kerjasama strategis dengan berbagai organisasi terkemuka di Indonesia</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            @forelse($partners as $partner)
+                <div class="group bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:border-indigo-200 transition-all duration-300 p-6 flex flex-col items-center text-center">
+                    <div class="w-24 h-24 bg-slate-50 rounded-xl mb-4 flex items-center justify-center overflow-hidden group-hover:bg-indigo-50 transition">
+                        <img src="{{ $partner->logo_url }}" 
+                             alt="{{ $partner->name }}"
+                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                    </div>
+                    
+                    <h3 class="font-bold text-slate-800 mb-1">{{ $partner->name }}</h3>
+                    
+                    <p class="text-xs text-slate-400 mb-3">
+                        Bergabung {{ $partner->created_at->format('M Y') }}
+                    </p>
+                    
+                    <div class="pt-3 border-t w-full">
+                        <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Partner Resmi</p>
+                    </div>
+                </div>
+            @empty
+                <div class="col-span-full text-center py-12">
+                    <p class="text-slate-400 font-medium">Belum ada mitra yang terdaftar</p>
+                </div>
+            @endforelse
+        </div>
     </section>
 @endsection
