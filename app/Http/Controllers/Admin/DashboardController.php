@@ -16,6 +16,8 @@ class DashboardController extends Controller
     }
 
     function indexTransaction(){
-        return view('admin.transactions');
+        $transactions = \App\Models\Transaction::with('event')->latest()->paginate(20);
+        return view('admin.transactions', compact('transactions'));
     }
+
 }
