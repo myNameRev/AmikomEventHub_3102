@@ -43,14 +43,27 @@ class PaymentController extends Controller
         ]);
 
 
+        // Cegah Check-out jika stok tiket habis
+        if ((int) $event->stock <= 0) {
+            return redirect()->back()->with('error', 'Mohon maaf, tiket untuk acara ini sudah habis.');
+        }
+
         // Generate unique order ID
         $orderId = 'ORDER-' . date('YmdHis') . '-' . Str::random(6);
 
-        // Kalkulasi total harga
-        $totalPrice = $event->price * $validated['quantity'];
+        // Kalkulasi total harga (+ biaya admin/service)
+        $quantity = (int) $validated['quantity'];
+        $totalPrice = ($event->price * $quantity) + 5000;
+
+
+        // Kurangi stok (opsional untuk demo modul)
+        if (method_exists($event, 'decrement')) {
+            $event->decrement('stock', $quantity);
+        }
 
         // Create transaction record
         $transaction = Transaction::create([
+
             'event_id' => $event->id,
             'order_id' => $orderId,
             'customer_name' => $validated['customer_name'],
